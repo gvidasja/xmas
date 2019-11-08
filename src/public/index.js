@@ -64,8 +64,12 @@ const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
 
     return fetch(`api/games/${game.name}/result/${name}`).then(
       h(({ result }) => {
-        confirm(`Tu ištraukei: ${result}`)
-        return onRevealed(result)
+        try {
+          confirm(`Tu ištraukei: ${atob(result)}`)
+          return onRevealed(result)
+        } catch {
+          return onError({ message: 'INTERNAL_SERVER_ERROR' })
+        }
       })
     )
   })
