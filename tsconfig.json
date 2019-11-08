@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2019",
     "module": "commonjs",
     "esModuleInterop": true,
-    "lib": ["es2020"],
+    "lib": ["esnext"],
     "noImplicitAny": true,
     "outDir": "dist"
   }
