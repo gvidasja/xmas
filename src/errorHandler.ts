@@ -1,15 +1,13 @@
 import { ErrorRequestHandler } from 'express'
 import { log } from './logging'
 
-export class BadRequestError extends Error {
-  constructor(message: string, public readonly params = {}) {
-    super(message)
-
-    Object.setPrototypeOf(this, BadRequestError.prototype)
-  }
+export class BadRequestError {
+  constructor(public readonly message: string, public readonly params = {}) {}
 }
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  log(JSON.stringify(err))
+
   if (res.headersSent) {
     return next(err)
   }

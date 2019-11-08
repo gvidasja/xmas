@@ -1,0 +1,22 @@
+@auth = Basic test test
+
+POST http://localhost:3000/api/games
+Content-Type: application/json
+Authorization: {{auth}}
+
+{
+  "name": "test",
+  "contestants": [
+    "lel",
+    "lėl"
+  ]
+}
+
+###
+
+POST http://localhost:3000/api/games/test
+Authorization: {{auth}}
+
+###
+GET http://localhost:3000/api/games/test/result/lel
+Authorization: {{auth}}
