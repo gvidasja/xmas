@@ -1,0 +1,24 @@
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+  - name: build_docker_image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: gvidelio/xmas
+      cache_from: gvidelio/xmas:arm32v7
+      tag: arm32v7
+      dockerfile: arm32v7.Dockerfile
+    when:
+      branch:
+        - master
+      event:
+        - push
