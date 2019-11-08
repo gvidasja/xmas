@@ -1,0 +1,11 @@
+POST http://localhost:3000/api/games
+Content-Type: application/json
+Authorization: Basic test:test
+
+{
+  "name": "test",
+  "contestants": [
+    "lel",
+    "lėl"
+  ]
+}
