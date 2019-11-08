@@ -31,7 +31,7 @@ const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Kažkas či neveik',
   BAD_REQUEST: 'Kažko neteip įvedė',
   ALREADY_EXISTS: 'Jau yra toks pavadinioms',
-  WRONG_PERSON: 'Kų či hakėn',
+  WRONG_PERSON: 'Ti kų či darai',
 }
 
 const ErrorMessage = ({ error, onClose }) =>

@@ -162,7 +162,7 @@ class Games {
     }
 
     if (game.result[personBase64].lastSeenIp && game.result[personBase64].lastSeenIp !== ip) {
-      return new BadRequestError('WRONG_PERSON')
+      throw new BadRequestError('WRONG_PERSON')
     }
 
     game.result[personBase64].lastSeenIp = ip
