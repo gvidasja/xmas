@@ -1,5 +1,13 @@
 const { createElement: e, useEffect, useState, useCallback } = React
 
+const base64toUtf8 = str =>
+  decodeURIComponent(
+    atob(str)
+      .split('')
+      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
+  )
+
 const formatDate = isoDate => {
   if (!isoDate) return ''
 
@@ -64,12 +72,13 @@ const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
 
     return fetch(`api/games/${game.name}/result/${name}`).then(
       h(({ result }) => {
-        try {
-          confirm(`Tu ištraukei: ${atob(result)}`)
-          return onRevealed(result)
-        } catch {
-          return onError({ message: 'INTERNAL_SERVER_ERROR' })
+        if (result) {
+          confirm(`Tu ištraukei: ${base64toUtf8(result)}`)
+        } else {
+          onError({ message: 'INTERNAL_SERVER_ERROR' })
         }
+
+        onRevealed(result)
       })
     )
   })
@@ -140,6 +149,7 @@ const App = () => {
           e(GameRow, {
             game,
             key: game.name,
+            onRevealed: onRefresh,
             onCalculated: onRefresh,
             onDeleted: onRefresh,
             onError: setError,
