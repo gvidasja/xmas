@@ -105,6 +105,10 @@ class Games {
     loadDb()
     const game = games.find(g => g.name === name)
 
+    if (!game) {
+      throw new BadRequestError('NOT_FOUND', { id: name })
+    }
+
     let result: Game['result']
 
     do {
@@ -141,7 +145,7 @@ class Games {
   }
 
   async getResult(id: string, person: string, ip: string) {
-    log(`${person} tryin to look at ${id} from ${ip} `)
+    log(`${person} trying to look at ${id} from ${ip} `)
 
     loadDb()
 
@@ -149,11 +153,15 @@ class Games {
 
     const personBase64 = encode(person)
 
+    if (!game) {
+      throw new BadRequestError('NOT_FOUND', { id })
+    }
+
     if (!game.result) {
       throw new BadRequestError('GAME_NOT_PLAYED')
     }
 
-    if (game.result[personBase64].lastSeenIp && game.result[personBase64].lastSeenIp !== id) {
+    if (game.result[personBase64].lastSeenIp && game.result[personBase64].lastSeenIp !== ip) {
       return new BadRequestError('WRONG_PERSON')
     }
 
