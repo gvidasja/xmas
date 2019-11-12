@@ -8,23 +8,24 @@ jobs:
   buildx:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v1
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           version: latest
-      -
-        name: Available platforms
+      - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      -
-        name: Run Buildx
+      - name: Run Buildx
         run: |
           docker buildx build \
             --platform linux/arm/v7 \
             --output "type=image,push=false" \
-            --tag "gvidaslio/xmas" \
+            --tag "gvidelio/xmas" \
             --file ./arm32v7.Dockerfile .
+      - name: Publish Image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} && \
+          docker push gvidelio/xmas && \
+          docker logout
