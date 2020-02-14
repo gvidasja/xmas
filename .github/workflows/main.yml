@@ -3,7 +3,7 @@ name: buildx
 on:
   push:
     branches: master
-    
+
 jobs:
   buildx:
     runs-on: ubuntu-latest
@@ -19,13 +19,11 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Run Buildx
         run: |
+          docker login -u gvidelio -p ${{ secrets.DOCKER_PASSWORD }} && \
           docker buildx build \
+            --cache-from gvidelio/xmas:latest \
             --platform linux/arm/v7 \
-            --output "type=image,push=false" \
-            --tag "gvidelio/xmas" \
-            --file ./arm32v7.Dockerfile .
-      - name: Publish Image
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} && \
-          docker push gvidelio/xmas && \
+            --tag "gvidelio/xmas:latest" \
+            --push \
+            --file ./arm32v7.Dockerfile . && \
           docker logout
