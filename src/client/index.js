@@ -1,3 +1,7 @@
+import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom'
+
 const { createElement: e, useEffect, useState, useCallback } = React
 
 const base64toUtf8 = str =>

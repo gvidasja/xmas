@@ -5,16 +5,36 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
+    "http-proxy-middleware": "^0.20.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "ts-node-dev": "^1.0.0-pre.44"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
     "@types/express": "^4.17.2",
+    "@types/http-proxy-middleware": "^0.19.3",
     "@types/node": "^13.7.1",
-    "typescript": "^3.7.2"
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "concurrently": "^5.1.0",
+    "css-loader": "^3.4.2",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "style-loader": "^1.1.3",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "scripts": {
-    "start": "tsnd --respawn --transpile-only --cls src",
-    "prebuild": "rm -rf dist",
-    "build": "tsc"
+    "start": "concurrently 'yarn startserver' 'yarn startclient'",
+    "startserver": "tsnd --respawn --transpile-only --cls src/server",
+    "startclient": "webpack-dev-server --watch",
+    "prebuildserver": "rm -rf dist/server",
+    "buildserver": "tsc",
+    "buildclient": "webpack",
+    "build": "yarn buildserver && yarn buildclient"
   }
 }

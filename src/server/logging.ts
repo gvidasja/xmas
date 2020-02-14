@@ -1,4 +1,4 @@
-import { writeFile, existsSync, writeFileSync, appendFileSync } from 'fs'
+import { appendFileSync } from 'fs'
 
 let logFile: string
 

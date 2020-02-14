@@ -1,10 +1,11 @@
-import express, { static as folder, json } from 'express'
+import express, { static as loadFromFolder, json } from 'express'
 import { join } from 'path'
 import Games from './games'
-import { configure } from './logging'
+import { configure, log } from './logging'
 import { errorHandler } from './errorHandler'
 import auth from './auth'
 import webApi from './webApi'
+import proxy from 'http-proxy-middleware'
 
 const {
   PORT = 3000,
@@ -12,16 +13,25 @@ const {
   LOGFILE = './.xmas.log',
   USERNAME = 'test',
   PASSWORD = 'test',
+  UI_PORT = 3001,
+  NODE_ENV = 'production',
 } = process.env
 
 const games = new Games(FILE)
 
 configure(LOGFILE)
 
+log(`Environment: ${NODE_ENV}`)
+
 express()
   .use(auth(USERNAME, PASSWORD))
   .use(json())
-  .use('/', folder(join(__dirname, './public')))
   .use('/api', webApi(games))
+  .use(
+    '/',
+    NODE_ENV === 'development'
+      ? proxy(`http://localhost:${UI_PORT}`)
+      : loadFromFolder(join(__dirname, './public'))
+  )
   .use(errorHandler)
-  .listen(PORT, () => console.log(`listening on ${PORT}.`))
+  .listen(PORT, () => log(`listening on ${PORT}.`))

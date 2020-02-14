@@ -5,6 +5,6 @@
     "esModuleInterop": true,
     "lib": ["esnext"],
     "noImplicitAny": true,
-    "outDir": "dist"
+    "outDir": "dist/server"
   }
 }
