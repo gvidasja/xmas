@@ -14,13 +14,3 @@ export const formatDate = isoDate => {
 
   return `${date} ${hours}:${minutes}`
 }
-
-export const handleErrorWith = (errorHandler = e => console.error(e)) => (
-  handler = r => r
-) => async response => {
-  if (response.ok) {
-    return handler(await response.json())
-  } else {
-    return errorHandler(await response.json())
-  }
-}

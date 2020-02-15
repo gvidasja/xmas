@@ -1,5 +1,3 @@
-import React from 'react'
-
 const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Kažkas či neveik',
   BAD_REQUEST: 'Kažko neteip įvedė',

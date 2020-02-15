@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'preact/hooks'
 import GameRow from './GameRow'
 import ErrorMessage from './ErrorMessage'
-import { handleErrorWith } from '../util'
+import { createApiClient } from '../http'
 
 const App = () => {
   const [games, setGames] = useState()
   const [error, setError] = useState()
-  const h = handleErrorWith(setError)
-  const onRefresh = useCallback(() => fetch('api/games').then(h(setGames)))
+
+  const apiClient = createApiClient({ errorHandler: setError })
+
+  const onRefresh = useCallback(() => apiClient.get('api/games').then(setGames))
 
   const addGame = useCallback(async () => {
     const name = prompt('Įvesk traukimo pavadinimą').trim()
@@ -22,43 +24,37 @@ const App = () => {
       contestants.push(nameToAdd)
     }
 
-    fetch('api/games', {
-      method: 'post',
-      body: JSON.stringify({
-        name,
-        contestants,
-      }),
-      headers: {
-        'content-type': 'application/json',
-      },
-    }).then(h(onRefresh))
+    await apiClient.post('api/games', {
+      name,
+      contestants,
+    })
+
+    onRefresh()
   })
 
   useEffect(() => {
     onRefresh()
   }, [])
 
-  return (
-    <>
-      <ErrorMessage error={error} onClose={() => setError()}></ErrorMessage>
-      <div>
-        <button onClick={addGame}>Kurk nauj traukimo</button>
-      </div>
-      <div className="list">
-        {games &&
-          games.map(game => (
-            <GameRow
-              game={game}
-              key={game.name}
-              onRevealed={onRefresh}
-              onCalculated={onRefresh}
-              onDeleted={onRefresh}
-              onError={setError}
-            ></GameRow>
-          ))}
-      </div>
-    </>
-  )
+  return [
+    <ErrorMessage error={error} onClose={() => setError()}></ErrorMessage>,
+    <div>
+      <button onClick={addGame}>Kurk nauj traukimo</button>
+    </div>,
+    <div className="list">
+      {games &&
+        games.map(game => (
+          <GameRow
+            game={game}
+            key={game.name}
+            onRevealed={onRefresh}
+            onCalculated={onRefresh}
+            onDeleted={onRefresh}
+            onError={setError}
+          ></GameRow>
+        ))}
+    </div>,
+  ]
 }
 
 export default App
