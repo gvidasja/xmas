@@ -1,5 +1,5 @@
 import express, { static as loadFromFolder, json } from 'express'
-import { join } from 'path'
+import { resolve } from 'path'
 import Games from './games'
 import { configure, log } from './logging'
 import { errorHandler } from './errorHandler'
@@ -14,6 +14,7 @@ const {
   USERNAME = 'test',
   PASSWORD = 'test',
   UI_PORT = 3001,
+  UI_PATH,
   NODE_ENV = 'production',
 } = process.env
 
@@ -31,7 +32,7 @@ express()
     '/',
     NODE_ENV === 'development'
       ? proxy(`http://localhost:${UI_PORT}`)
-      : loadFromFolder(join(__dirname, './public'))
+      : loadFromFolder(resolve(UI_PATH))
   )
   .use(errorHandler)
   .listen(PORT, () => log(`listening on ${PORT}.`))

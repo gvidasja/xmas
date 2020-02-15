@@ -33,7 +33,10 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-react'],
+              plugins: [
+                ['@babel/plugin-transform-react-jsx', { pragma: 'h', pragmaFrag: 'Fragment' }],
+                ['babel-plugin-jsx-pragmatic', { module: 'preact', export: 'h', import: 'h' }],
+              ],
             },
           },
         ],

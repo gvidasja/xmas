@@ -1,6 +1,5 @@
-import './index.css'
-import ReactDOM from 'react-dom'
-import React from 'react'
+import { render } from 'preact'
 import App from './components/App'
+import './index.css'
 
-ReactDOM.render(<App />, document.querySelector('#app'))
+render(<App />, document.querySelector('#app'))

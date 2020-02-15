@@ -1,23 +1,20 @@
-import React, { useCallback } from 'react'
-import { base64toUtf8, formatDate, handleErrorWith } from '../util'
+import { useCallback } from 'preact/hooks'
+import { base64toUtf8, formatDate } from '../util'
+import { createApiClient } from '../http'
 
 const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
-  const h = handleErrorWith(onError)
+  const apiClient = createApiClient({ errorHandler: onError })
 
-  const onCalculate = useCallback(async () => {
+  const onCalculate = useCallback(() => {
     if (!confirm('Tiokrai nor traukt?')) return
 
-    return fetch(`api/games/${game.name}`, {
-      method: 'post',
-    }).then(h(onCalculated))
+    return apiClient.post(`api/games/${game.name}`).then(onCalculated)
   })
 
-  const onDelete = useCallback(async () => {
+  const onDelete = useCallback(() => {
     if (!confirm('Tiokrai nor ištrint?')) return
 
-    return fetch(`api/games/${game.name}`, {
-      method: 'delete',
-    }).then(h(onDeleted))
+    apiClient.delete(`api/games/${game.name}`).then(onDeleted)
   })
 
   const onReveal = useCallback(async () => {
@@ -25,17 +22,15 @@ const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
 
     if (!name) return
 
-    return fetch(`api/games/${game.name}/result/${name}`).then(
-      h(({ result }) => {
-        if (result) {
-          confirm(`Tu ištraukei: ${base64toUtf8(result)}`)
-        } else {
-          onError({ message: 'INTERNAL_SERVER_ERROR' })
-        }
+    return apiClient.get(`api/games/${game.name}/result/${name}`).then(({ result }) => {
+      if (result) {
+        confirm(`Tu ištraukei: ${base64toUtf8(result)}`)
+      } else {
+        onError({ message: 'INTERNAL_SERVER_ERROR' })
+      }
 
-        onRevealed(result)
-      })
-    )
+      onRevealed(result)
+    })
   })
 
   return (
