@@ -24,6 +24,7 @@ jobs:
             --cache-from gvidelio/xmas:latest \
             --platform linux/arm/v7 \
             --tag "gvidelio/xmas:latest" \
+            --build-arg BASE_IMAGE=arm32v7/node:alpine
             --push \
-            --file ./arm32v7.Dockerfile . && \
+            --file ./Dockerfile . && \
           docker logout
