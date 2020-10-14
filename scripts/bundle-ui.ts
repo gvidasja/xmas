@@ -1,13 +1,13 @@
 import { join, resolve } from "https://deno.land/std@0.74.0/path/mod.ts";
 import { copySync, emptyDirSync } from "https://deno.land/std@0.74.0/fs/mod.ts";
-import { getLogger } from "./logging.ts";
+import { getLogger } from "https://deno.land/std@0.74.0/log/mod.ts";
 
 const logger = getLogger();
-const uiPath = Deno.args[0];
-const OUTPUT_DIR = resolve(uiPath);
+const [staticDir, jsPath, outputDir] = Deno.args;
+const OUTPUT_DIR = resolve(outputDir);
 
-copyStaticFiles(resolve("./ui/public"), resolve(uiPath));
-bundleJsTo(Deno.realPathSync("./ui/index.jsx"), join(OUTPUT_DIR, "index.js"));
+copyStaticFiles(resolve(staticDir), resolve(outputDir));
+bundleJsTo(Deno.realPathSync(jsPath), join(OUTPUT_DIR, "index.js"));
 
 function copyStaticFiles(sourceDir: string, destinationDir: string) {
   logger.info(`Emptying ${destinationDir}...`);
