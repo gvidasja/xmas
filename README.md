@@ -4,10 +4,16 @@ XSaaS - Christmas Spirit as a Service
 ## Local development
 
 Prerequisites:
-* Node.js
-* Yarn recommended
+* Deno
+* VS Code recommended with extensions - Rest Client, Deno
 
 To launch the project:
-1. Run `yarn start`
-2. Go to http://localhost:3001
-3. Page will be reloaded when changing code
+
+via VS Code:
+1. Press `F5`
+
+via command line:
+1. `deno run --allow-all --unstable src/server/server.ts`
+
+via docker:
+1. `docker-compose up`
