@@ -1,12 +1,10 @@
-ARG BASE_IMAGE=node:alpine
-
-FROM ${BASE_IMAGE} as build
+FROM node:alpine as build
 
 WORKDIR /build
 COPY . .
 RUN yarn && yarn build
 
-FROM ${BASE_IMAGE}
+FROM node:alpine
 
 WORKDIR /app
 COPY --from=build /build/dist dist
