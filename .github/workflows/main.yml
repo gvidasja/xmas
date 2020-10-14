@@ -28,12 +28,22 @@ jobs:
         with:
           username: gvidelio
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Run Buildx
+      - name: Publish release
+        if: "!github.events.release.prerelease"
         run: |
           docker buildx build \
             --cache-from gvidelio/xmas:latest \
             --platform linux/arm/v7,linux/amd64 \
             --tag "gvidelio/xmas:latest" \
+            --tag "gvidelio/xmas:${GITHUB_REF##*/}" \
+            --push \
+            --file ./Dockerfile .
+      - name: Publish pre-release
+        if: "github.events.release.prerelease"
+        run: |
+          docker buildx build \
+            --cache-from gvidelio/xmas:latest \
+            --platform linux/arm/v7,linux/amd64 \
             --tag "gvidelio/xmas:${GITHUB_REF##*/}" \
             --push \
             --file ./Dockerfile .
