@@ -1,0 +1,65 @@
+import { React, useCallback, useEffect, useState } from "../react.js";
+import GameRow from "./GameRow.jsx";
+import ErrorMessage from "./ErrorMessage.jsx";
+import { createApiClient } from "../http.js";
+
+const App = () => {
+  const [games, setGames] = useState();
+  const [error, setError] = useState();
+
+  const apiClient = createApiClient();
+
+  const onRefresh = useCallback(() =>
+    apiClient.get("api/games").then(setGames, setError)
+  );
+
+  const addGame = useCallback(async () => {
+    const name = prompt("Įvesk traukimo pavadinimą").trim();
+    const contestants = [];
+    let nameToAdd;
+
+    while (
+      (nameToAdd = prompt(
+        "Įvesk vardą ir spausk Enter arba palik tuščią ir spausk Enter, kad išsaugotum.",
+      ).trim())
+    ) {
+      contestants.push(nameToAdd);
+    }
+
+    await apiClient.post("api/games", {
+      name,
+      contestants,
+    }).catch(setError);
+
+    onRefresh();
+  });
+
+  useEffect(() => {
+    onRefresh();
+  }, []);
+
+  return (
+    <>
+      <ErrorMessage error={error} onClose={() => setError()}></ErrorMessage>
+      <div>
+        <button onClick={addGame}>Kurk nauj traukimo</button>
+      </div>
+      <div className="list">
+        {games &&
+          games.map((game) => (
+            <GameRow
+              game={game}
+              key={game.name}
+              onRevealed={onRefresh}
+              onCalculated={onRefresh}
+              onDeleted={onRefresh}
+              onError={(...args) => console.log(...args) || setError(...args)}
+            >
+            </GameRow>
+          ))}
+      </div>
+    </>
+  );
+};
+
+export default App;
