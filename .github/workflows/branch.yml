@@ -1,8 +1,9 @@
-name: publish-image
+name: build
 
 on:
-  release:
-    types: [published, edited, released]
+  push:
+    branches:
+      - '*'
 
 jobs:
   buildx:
@@ -20,27 +21,11 @@ jobs:
           version: latest
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Docker Login
-        uses: docker/login-action@v1
-        with:
-          username: gvidelio
-          password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Publish release
-        if: "!github.event.release.prerelease"
+      - name: Run Buildx
         run: |
           docker buildx build \
             --cache-from gvidelio/xmas:latest \
             --platform linux/arm/v7,linux/amd64 \
             --tag "gvidelio/xmas:latest" \
             --tag "gvidelio/xmas:${GITHUB_REF##*/}" \
-            --push \
-            --file ./Dockerfile .
-      - name: Publish pre-release
-        if: "github.event.release.prerelease"
-        run: |
-          docker buildx build \
-            --cache-from gvidelio/xmas:latest \
-            --platform linux/arm/v7,linux/amd64 \
-            --tag "gvidelio/xmas:${GITHUB_REF##*/}" \
-            --push \
             --file ./Dockerfile .
