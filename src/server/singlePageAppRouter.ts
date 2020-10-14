@@ -2,6 +2,11 @@ import {
   Router,
   RouterMiddleware,
 } from "https://deno.land/x/oak@v6.2.0/router.ts";
+import {
+  dirname,
+  fromFileUrl,
+  join,
+} from "https://deno.land/std@0.74.0/path/mod.ts";
 import { js } from "./httpResponse.ts";
 import { getLogger } from "./logging.ts";
 
@@ -18,10 +23,13 @@ export const singlePageAppRouter = async (
   const router = new Router();
 
   if (compileJavascript) {
-    const appJsPath = "./ui/index.jsx";
+    const appJsPath = join(
+      dirname(fromFileUrl(import.meta.url)),
+      "../ui/index.jsx",
+    );
 
     getLogger().debug("Bundling JS...");
-    const [, bundledJs] = await Deno.bundle(Deno.realPathSync(appJsPath));
+    const [, bundledJs] = await Deno.bundle(appJsPath);
     getLogger().debug("JS Bundling finished.");
 
     router.get("/index.js", (ctx) => js(ctx, bundledJs));

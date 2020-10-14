@@ -1,4 +1,9 @@
 import { Application } from "https://deno.land/x/oak@v6.2.0/mod.ts";
+import {
+  dirname,
+  fromFileUrl,
+  join,
+} from "https://deno.land/std@0.74.0/path/mod.ts";
 import { singleUserBasicAuth } from "./singleUserBasicAuth.ts";
 import { requestResponseLogging } from "./requestsResponseLogging.ts";
 import { getLogger } from "./logging.ts";
@@ -14,10 +19,8 @@ const {
   AUTH_PASSWORD = "test",
   DB_PATH = "./xmas.json",
   ENV = "dev",
-  UI_PATH = "./ui/public",
+  UI_PATH = join(dirname(fromFileUrl(import.meta.url)), "../ui/public"),
 } = Deno.env.toObject();
-
-const uiPath = Deno.realPathSync(UI_PATH);
 
 const app = new Application()
   .use(requestResponseLogging(getLogger()))
@@ -25,7 +28,7 @@ const app = new Application()
   .use(singleUserBasicAuth(AUTH_USERNAME, AUTH_PASSWORD))
   .use(gameRouter(new Games(DB_PATH, getLogger("audit"))).routes())
   .use(
-    (await singlePageAppRouter(uiPath, ensureCorrectEnv(ENV) == "dev"))
+    (await singlePageAppRouter(UI_PATH, ensureCorrectEnv(ENV) == "dev"))
       .routes(),
   );
 
