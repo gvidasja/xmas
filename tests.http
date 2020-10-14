@@ -18,5 +18,9 @@ POST http://localhost:3000/api/games/test
 Authorization: {{auth}}
 
 ###
-GET http://localhost:3000/api/games/test/result/lel
+GET http://localhost:3000/api/games
+Authorization: {{auth}}
+
+###
+GET http://localhost:3000/api/games/2020/result/lel
 Authorization: {{auth}}

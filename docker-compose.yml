@@ -4,11 +4,14 @@ services:
     build:
       context: "."
       dockerfile: "Dockerfile"
-      args:
-        BASE_IMAGE: node:alpine
     ports:
       - 3000:3000
-    volumes:
-      - ./.db.json:/xmas/.db.json
     environment:
-      FILE: /xmas/.db.json
+      DB_PATH: /xmas/db.json
+      AUTH_USERNAME: test
+      AUTH_PASSWORD: test
+    volumes:
+      - db:/xmas
+
+volumes:
+  db:

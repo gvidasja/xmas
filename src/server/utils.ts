@@ -1,7 +1,13 @@
-import { Request } from 'express'
+import type { Context } from "https://deno.land/x/oak@v6.2.0/context.ts";
 
-export const getIp = (req: Request) =>
-  (req.headers['x-forwarded-for'] as string) || req.connection.remoteAddress
+export const getIp = (ctx: Context): string => ctx.request.ip;
+export const decode = (str: string) => atob(str);
+export const encode = (str: string) => btoa(str);
 
-export const decode = (str: string) => Buffer.from(str, 'base64').toString('utf-8')
-export const encode = (str: string) => Buffer.from(str, 'utf-8').toString('base64')
+export const ensureCorrectEnv = (envStr: string): "dev" | "prod" => {
+  if (envStr !== "dev" && envStr !== "prod") {
+    throw new Error(`${envStr} is incorrect environment`);
+  }
+
+  return envStr;
+};
