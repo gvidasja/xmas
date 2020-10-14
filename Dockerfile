@@ -1,21 +1,17 @@
-ARG BASE_IMAGE=node:alpine
-
-FROM ${BASE_IMAGE} as build
-
-WORKDIR /build
-COPY . .
-RUN yarn && yarn build
-
-FROM ${BASE_IMAGE}
+FROM hayd/deno:alpine as build
 
 WORKDIR /app
-COPY --from=build /build/dist dist
-COPY package.json .
-COPY yarn.lock .
-RUN yarn --production
+COPY src/ui scripts/bundle-ui.ts ./
+RUN deno run --unstable --allow-net --allow-write --allow-read bundle-ui.ts public index.jsx dist
 
-ENV NODE_ENV production
-ENV UI_PATH /app/dist/client
+FROM hayd/deno:alpine
 
-ENTRYPOINT [ "node", "dist/server" ]
+WORKDIR /app
+ENV ENV=prod
+ENV UI_PATH=/app/dist
 
+COPY src/server .
+RUN deno cache --unstable server.ts
+COPY --from=build /app/dist dist
+
+CMD [ "deno", "run", "--allow-write", "--allow-net", "--allow-read", "--allow-env", "server.ts" ]
