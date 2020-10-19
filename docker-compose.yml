@@ -1,9 +1,9 @@
-version: "3"
+version: '3'
 services:
   xmas:
     build:
-      context: "."
-      dockerfile: "Dockerfile"
+      context: '.'
+      dockerfile: 'Dockerfile'
       args:
         BASE_IMAGE: node:alpine
     ports:
@@ -12,3 +12,5 @@ services:
       - ./.db.json:/xmas/.db.json
     environment:
       FILE: /xmas/.db.json
+      AUTH_USERNAME: test
+      AUTH_PASSWORD: test
