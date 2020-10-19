@@ -11,8 +11,8 @@ const {
   PORT = 3000,
   FILE = './.db.json',
   LOGFILE = './.xmas.log',
-  USERNAME = 'test',
-  PASSWORD = 'test',
+  _USERNAME = 'test',
+  _PASSWORD = 'test',
   UI_PORT = 3001,
   UI_PATH,
   NODE_ENV = 'production',
@@ -25,7 +25,7 @@ configure(LOGFILE)
 log(`Environment: ${NODE_ENV}`)
 
 express()
-  .use(auth(USERNAME, PASSWORD))
+  .use(auth(_USERNAME, _PASSWORD))
   .use(json())
   .use('/api', webApi(games))
   .use(
