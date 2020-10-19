@@ -1,0 +1,19 @@
+.seen {
+  color: #4caf50;
+}
+
+.not-seen {
+  color: #e53935;
+}
+
+.card-action > button {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 10px;
+}
+
+.cell.seen-display > * {
+  position: relative;
+  display: flex;
+  align-items: center;
+}

@@ -1,6 +1,7 @@
 import { useCallback } from 'preact/hooks'
 import { base64toUtf8, formatDate } from '../util'
 import { createApiClient } from '../http'
+import '../styles/GameRow.css'
 
 const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
   const apiClient = createApiClient({ errorHandler: onError })
@@ -34,26 +35,33 @@ const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
   })
 
   return (
-    <div className="row">
-      <b className="cell name">{game.name}</b>
-      <div className="cell date">{formatDate(game.lastCalculated)}</div>
-      <div className="cell buttons">
-        <button onClick={onReveal} disabled={!game.lastCalculated}>
-          Pažiūrem!
-        </button>
-        <div className="cell">
-          <button onClick={onCalculate}>Traukiam iš nauja!</button>
-        </div>
-        <div className="cell">
-          <button onClick={onDelete}>Trink laukan!</button>
-        </div>
-      </div>
-      <div className="cell seen-display">
-        {Object.entries(game.seen).map(([name, seen]) => (
-          <div key={name} className={seen ? 'seen' : 'not-seen'}>
-            {name}
+    <div class="row">
+      <div class="col">
+        <div class="card grey lighten-1">
+          <div class="card-content black-text">
+            <span class="card-title">{game.name}</span>
+            <span class="card-title">{formatDate(game.lastCalculated)}</span>
+            <div className="cell seen-display">
+              {Object.entries(game.seen).map(([name, seen]) => (
+                <div key={name}>
+                  <i className={seen ? 'material-icons seen' : 'material-icons not-seen'}>{seen ? 'done' : 'clear'}</i>
+                  {name}
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
+          <div class="card-action">
+            <button class="waves-effect waves-light btn green" onClick={onReveal} disabled={!game.lastCalculated}>
+              <i class="material-icons left">remove_red_eye</i>Pažiūrem!
+            </button>
+            <button class="waves-effect waves-light btn blue" onClick={onCalculate}>
+              <i class="material-icons left">play_arrow</i>Pradėt traukymo!
+            </button>
+            <button class="waves-effect waves-light btn red" onClick={onDelete}>
+              <i class="material-icons left">delete</i>Ištrinti
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

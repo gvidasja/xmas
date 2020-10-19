@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'preact/hooks'
 import GameRow from './GameRow'
 import ErrorMessage from './ErrorMessage'
 import { createApiClient } from '../http'
+import '../styles/App.css'
 
 const App = () => {
   const [games, setGames] = useState()
@@ -39,20 +40,25 @@ const App = () => {
   return [
     <ErrorMessage error={error} onClose={() => setError()}></ErrorMessage>,
     <div>
-      <button onClick={addGame}>Kurk nauj traukimo</button>
+      <button class="waves-effect waves-light btn-large green darken-2 new-row-btn"
+      onClick={addGame}>
+        <i class="material-icons left">add_circle</i>Naujas traukimas
+      </button>
     </div>,
-    <div className="list">
-      {games &&
-        games.map(game => (
-          <GameRow
-            game={game}
-            key={game.name}
-            onRevealed={onRefresh}
-            onCalculated={onRefresh}
-            onDeleted={onRefresh}
-            onError={setError}
-          ></GameRow>
+    <div class="grid-wrapper">
+      <div class="games-grid">
+        {games &&
+          games.map(game => (
+            <GameRow
+              game={game}
+              key={game.name}
+              onRevealed={onRefresh}
+              onCalculated={onRefresh}
+              onDeleted={onRefresh}
+              onError={setError}
+            ></GameRow>
         ))}
+      </div>
     </div>,
   ]
 }
