@@ -1,3 +1,5 @@
+import '../styles/ErrorMessage.css'
+
 const MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Kažkas či neveik',
   BAD_REQUEST: 'Kažko neteip įvedė',
