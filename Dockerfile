@@ -1,16 +1,16 @@
-FROM hayd/deno:alpine as build
+FROM denoland/deno:alpine as build
 
 WORKDIR /app
-COPY src/ui scripts/bundle-ui.ts ./
-RUN deno run --unstable --allow-net --allow-write --allow-read bundle-ui.ts public index.jsx dist
+COPY src/client scripts/bundle-client.ts ./
+RUN deno run --unstable --allow-net --allow-write --allow-read bundle-client.ts public index.js dist
 
-FROM hayd/deno:alpine
+FROM denoland/deno:alpine
 
 WORKDIR /app
 ENV ENV=prod
 ENV UI_PATH=/app/dist
 
-COPY src/server .
+COPY src/server-deno .
 RUN deno cache --unstable server.ts
 COPY --from=build /app/dist dist
 

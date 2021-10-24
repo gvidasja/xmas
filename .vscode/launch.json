@@ -8,15 +8,10 @@
       "name": "Launch Deno",
       "request": "launch",
       "type": "pwa-node",
-      "program": "src/server/server.ts",
+      "program": "src/server-deno/server.ts",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "deno",
-      "runtimeArgs": [
-        "run",
-        "--unstable",
-        "--inspect-brk",
-        "--allow-all"
-      ],
+      "runtimeArgs": ["run", "--unstable", "--inspect-brk", "--allow-all"],
       "env": {
         "PORT": "3000"
       },
