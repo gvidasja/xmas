@@ -1,9 +1,5 @@
-import { Application } from 'https://deno.land/x/oak@v6.2.0/mod.ts'
-import {
-  dirname,
-  fromFileUrl,
-  join,
-} from 'https://deno.land/std@0.74.0/path/mod.ts'
+import { Application } from 'https://deno.land/x/oak@v9.0.1/mod.ts'
+import { dirname, fromFileUrl, join } from 'https://deno.land/std@0.105.0/path/mod.ts'
 import { singleUserBasicAuth } from './singleUserBasicAuth.ts'
 import { requestResponseLogging } from './requestsResponseLogging.ts'
 import { getLogger } from './logging.ts'
@@ -27,11 +23,7 @@ const app = new Application()
   .use(errorHandler(getLogger()))
   .use(singleUserBasicAuth(AUTH_USERNAME, AUTH_PASSWORD))
   .use(gameRouter(new Games(DB_PATH, getLogger('audit'))).routes())
-  .use(
-    (
-      await singlePageAppRouter(UI_PATH, ensureCorrectEnv(ENV) == 'dev')
-    ).routes()
-  )
+  .use((await singlePageAppRouter(UI_PATH, ensureCorrectEnv(ENV) == 'dev')).routes())
 
 getLogger().debug(`Open aap: http://localhost:${PORT}`)
 

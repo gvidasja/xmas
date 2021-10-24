@@ -1,4 +1,4 @@
-import { encode } from 'https://deno.land/std@0.74.0/node/querystring.ts'
+import { encode } from 'https://deno.land/std@0.112.0/node/querystring.ts'
 
 export const createApiClient = () => {
   const request = (method, url, query = {}, body) => {
@@ -6,7 +6,7 @@ export const createApiClient = () => {
       return fetch(`${url}?${encode(query)}`, {
         method,
         body: body ? JSON.stringify(body) : undefined,
-      }).then(async (response) =>
+      }).then(async response =>
         response.ok
           ? response.json()
           : Promise.reject(await response.json().catch(() => response.text()))

@@ -1,31 +1,29 @@
-import { unauthorized } from "./httpResponse.ts";
-import type { Middleware } from "https://deno.land/x/oak@v6.2.0/mod.ts";
+import { unauthorized } from './httpResponse.ts'
+import type { Middleware } from 'https://deno.land/x/oak@v9.0.1/mod.ts'
 
-export const singleUserBasicAuth = (
-  username: string,
-  password: string,
-): Middleware =>
-  async (ctx, next) => {
-    const authHeader = ctx.request.headers.get("Authorization");
+export const singleUserBasicAuth =
+  (username: string, password: string): Middleware =>
+  (ctx, next) => {
+    const authHeader = ctx.request.headers.get('Authorization')
 
     if (!authHeader) {
-      return (unauthorized(ctx, "Authorization header not provided"));
+      return unauthorized(ctx, 'Authorization header not provided')
     }
 
-    const encodedAuth = (authHeader.match(/Basic (.+)/) || [])[1];
+    const encodedAuth = (authHeader.match(/Basic (.+)/) || [])[1]
 
     if (!encodedAuth) {
-      return unauthorized(ctx, "invalid Authorization header");
+      return unauthorized(ctx, 'invalid Authorization header')
     }
 
-    const [requestUsername, requestPassword] = atob(encodedAuth).split(":");
+    const [requestUsername, requestPassword] = atob(encodedAuth).split(':')
 
-    if ((requestUsername !== username) || (requestPassword !== password)) {
+    if (requestUsername !== username || requestPassword !== password) {
       return unauthorized(
         ctx,
-        `invalid username or password ${requestUsername}:${requestPassword}:${username}:${password}`,
-      );
+        `invalid username or password ${requestUsername}:${requestPassword}:${username}:${password}`
+      )
     }
 
-    return next();
-  };
+    return next()
+  }

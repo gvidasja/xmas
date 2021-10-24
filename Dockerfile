@@ -2,7 +2,7 @@ FROM denoland/deno:alpine as build
 
 WORKDIR /app
 COPY src/client scripts/bundle-client.ts ./
-RUN deno run --unstable --allow-net --allow-write --allow-read bundle-client.ts public index.js dist
+RUN deno run --unstable --allow-net --allow-write --allow-read bundle-client.ts public index.jsx dist
 
 FROM denoland/deno:alpine
 
