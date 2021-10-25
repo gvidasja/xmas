@@ -1,19 +1,17 @@
-FROM node:alpine as build
-
-WORKDIR /build
-COPY . .
-RUN yarn && yarn build
-
-FROM node:alpine
+FROM denoland/deno:alpine as build
 
 WORKDIR /app
-COPY --from=build /build/dist dist
-COPY package.json .
-COPY yarn.lock .
-RUN yarn --production
+COPY src/client scripts/bundle-client.ts ./
+RUN deno run --unstable --allow-net --allow-write --allow-read bundle-client.ts public index.jsx dist
 
-ENV NODE_ENV production
-ENV UI_PATH /app/dist/client
+FROM denoland/deno:alpine
 
-ENTRYPOINT [ "node", "dist/server" ]
+WORKDIR /app
+ENV ENV=prod
+ENV UI_PATH=/app/dist
 
+COPY src/server-deno .
+RUN deno cache --unstable server.ts
+COPY --from=build /app/dist dist
+
+CMD [ "deno", "run", "--allow-write", "--allow-net", "--allow-read", "--allow-env", "server.ts" ]

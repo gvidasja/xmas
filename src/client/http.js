@@ -1,22 +1,20 @@
-import axios from 'axios'
-import qs from 'querystring'
+import { encode } from 'https://deno.land/std@0.112.0/node/querystring.ts'
 
-export const createApiClient = ({ baseUrl = undefined, errorHandler }) => {
-  const clientInstance = axios.create({
-    baseURL: baseUrl,
-  })
-
-  const request = (method, url, query = {}, body) =>
-    clientInstance
-      .request({
+export const createApiClient = () => {
+  const request = (method, url, query = {}, body) => {
+    try {
+      return fetch(`${url}?${encode(query)}`, {
         method,
-        url: `${url}?${qs.encode(query)}`,
-        data: body,
-      })
-      .then(
-        ({ data }) => data,
-        ({ ...data }) => console.error(data) || errorHandler(data)
+        body: body ? JSON.stringify(body) : undefined,
+      }).then(async response =>
+        response.ok
+          ? response.json()
+          : Promise.reject(await response.json().catch(() => response.text()))
       )
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const get = (url, query = {}) => request('get', url, query)
   const post = (url, body, query) => request('post', url, query, body)

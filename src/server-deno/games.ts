@@ -1,7 +1,7 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { log } from './logging'
-import { BadRequestError } from './errorHandler'
-import { decode, encode } from './utils'
+import { BadRequestError } from './errorHandler.ts'
+import { decode, encode } from './utils.ts'
+import { existsSync } from 'https://deno.land/std@0.105.0/fs/mod.ts'
+import type { Logger } from 'https://deno.land/std@0.105.0/log/logger.ts'
 
 interface Game {
   name: string
@@ -21,7 +21,7 @@ type SanitizedGame = Pick<Game, 'name' | 'contestants' | 'lastCalculated'> & {
   }
 }
 
-const sanitize = (game?: Game): SanitizedGame => {
+const sanitize = (game?: Game): SanitizedGame | undefined => {
   if (!game) return game
 
   const { name, contestants, result = {}, lastCalculated } = game
@@ -53,22 +53,20 @@ let saveDb: () => void
 let loadDb: () => void
 
 class Games {
-  constructor(file: string) {
+  constructor(file: string, private logger: Logger) {
     loadDb = () => {
-      games = existsSync(file)
-        ? JSON.parse(readFileSync(file, { encoding: 'utf-8' }) || '[]') || []
-        : []
+      games = existsSync(file) ? JSON.parse(Deno.readTextFileSync(file) || '[]') || [] : []
     }
 
     saveDb = () => {
-      writeFileSync(file, JSON.stringify(games, null, 2), { encoding: 'utf-8' })
+      Deno.writeTextFileSync(file, JSON.stringify(games, null, 2))
     }
 
     loadDb()
     saveDb()
   }
 
-  async getAll() {
+  getAll() {
     loadDb()
     return games.map(sanitize)
   }
@@ -80,7 +78,7 @@ class Games {
       throw new BadRequestError('ALREADY_EXISTS')
     }
 
-    log(`Creating game with ${contestants.join(', ')}`)
+    this.logger.info(`Creating game with ${contestants.join(', ')}`)
 
     const game = {
       contestants: shuffle(contestants).map(encode),
@@ -94,13 +92,13 @@ class Games {
     return sanitize(game)
   }
 
-  async get(name: string) {
+  get(name: string) {
     loadDb()
     return sanitize(games.find(g => g.name === name))
   }
 
-  async calculate(name: string, ip: string) {
-    log(`Calculating for ${name} by ${ip}`)
+  calculate(name: string, ip: string) {
+    this.logger.info(`Calculating for ${name} by ${ip}`)
 
     loadDb()
     const game = games.find(g => g.name === name)
@@ -145,13 +143,17 @@ class Games {
   }
 
   async getResult(id: string, person: string, ip: string) {
-    log(`${person} trying to look at ${id} from ${ip} `)
+    this.logger.info(`${person} trying to look at ${id} from ${ip}`)
 
     loadDb()
 
     const game = games.find(x => x.name === id)
 
     const personBase64 = encode(person)
+
+    if (!ip) {
+      throw new Error('ip address was not passed')
+    }
 
     if (!game) {
       throw new BadRequestError('NOT_FOUND', { id })
@@ -161,7 +163,13 @@ class Games {
       throw new BadRequestError('GAME_NOT_PLAYED')
     }
 
-    if (game.result[personBase64].lastSeenIp && game.result[personBase64].lastSeenIp !== ip) {
+    if (
+      !game.result[personBase64] ||
+      Object.entries(game.result).some(
+        ([personKey, result]) => personKey !== personBase64 && result.lastSeenIp === ip
+      ) ||
+      (game.result[personBase64].lastSeenIp && game.result[personBase64].lastSeenIp !== ip)
+    ) {
       throw new BadRequestError('WRONG_PERSON')
     }
 
@@ -187,4 +195,4 @@ class Games {
   }
 }
 
-export default Games
+export { Games }

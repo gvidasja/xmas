@@ -1,6 +1,6 @@
-import { useCallback } from 'preact/hooks'
-import { base64toUtf8, formatDate } from '../util'
-import { createApiClient } from '../http'
+import { React, useCallback } from '../react.js'
+import { base64toUtf8, formatDate } from '../util.js'
+import { createApiClient } from '../http.js'
 
 const GameRow = ({ game, onCalculated, onRevealed, onDeleted, onError }) => {
   const apiClient = createApiClient({ errorHandler: onError })

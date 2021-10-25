@@ -1,0 +1,27 @@
+[
+  {
+    "contestants": [
+      "YmVueg==",
+      "Z3VpZGVsaW8=",
+      "anVrdWJ6",
+      "anVzdGVuYQ=="
+    ],
+    "name": "opce, kaledos ateja",
+    "result": {
+      "YmVueg==": {
+        "person": "anVrdWJ6"
+      },
+      "Z3VpZGVsaW8=": {
+        "person": "anVzdGVuYQ==",
+        "lastSeenIp": "127.0.0.1"
+      },
+      "anVrdWJ6": {
+        "person": "YmVueg=="
+      },
+      "anVzdGVuYQ==": {
+        "person": "Z3VpZGVsaW8="
+      }
+    },
+    "lastCalculated": "2021-10-24T21:59:04.455Z"
+  }
+]
